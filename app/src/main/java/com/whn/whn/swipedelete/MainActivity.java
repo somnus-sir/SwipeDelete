@@ -2,6 +2,7 @@ package com.whn.whn.swipedelete;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -27,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
         lv = (ListView) findViewById(R.id.listview);
         myAdapter mAdapter = new myAdapter();
         lv.setAdapter(mAdapter);
+
+
     }
 
 
@@ -66,6 +69,14 @@ public class MainActivity extends AppCompatActivity {
             }
             viewHolder.tvName.setText(Constant.NAMES[position]);
             viewHolder.swipelayout.setonSwipeListener(this);//当前条目
+
+           viewHolder.swipelayout.setOnClickListener(new View.OnClickListener() {
+               @Override
+               public void onClick(View v) {
+                   Toast.makeText(MainActivity.this, "click", Toast.LENGTH_SHORT).show();
+                   Log.d("MainActivity", "onClick: click");
+               }
+           });
             return convertView;
         }
 
@@ -97,6 +108,8 @@ public class MainActivity extends AppCompatActivity {
                 currentLayout.close();
             }
         }
+
+
     }
     static class ViewHolder {
         @InjectView(R.id.tv_delete)

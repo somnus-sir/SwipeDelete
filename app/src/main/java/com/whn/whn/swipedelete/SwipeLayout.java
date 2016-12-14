@@ -7,6 +7,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.widget.FrameLayout;
 
 import static android.content.ContentValues.TAG;
@@ -22,6 +23,7 @@ public class SwipeLayout extends FrameLayout {
     private ViewDragHelper viewDragHelper;
     private float downX;
     private float downY;
+    private long mTime;
 
     public SwipeLayout(Context context) {
         this(context, null);
@@ -54,6 +56,7 @@ public class SwipeLayout extends FrameLayout {
             case MotionEvent.ACTION_DOWN:
                 downX = event.getX();
                 downY = event.getY();
+                mTime = System.currentTimeMillis();
                 if(listener!=null){
                     listener.onTouchDown(SwipeLayout.this);
                 }
@@ -68,6 +71,20 @@ public class SwipeLayout extends FrameLayout {
                 if(dx>dy){
                     //横向滑动请求父类不拦截
                     requestDisallowInterceptTouchEvent(true);
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                //1.按下抬起的时间
+                long duration = System.currentTimeMillis() - mTime;
+                //2.计算按下抬起的距离
+                float deltaX = event.getX() - downX;
+                float deltaY = event.getY() - downY;
+                float distance = (float) Math.sqrt(Math.pow(deltaX,2)+Math.pow(deltaY,2));
+                //如果按下抬起的时间小于500，并且按下抬起的距离小于8像素
+                if(duration< ViewConfiguration.getLongPressTimeout() && distance<
+                        ViewConfiguration.getTouchSlop()){
+                    //则认为是满足了执行点击的条件
+                    performClick();//作用就是执行OnClickListener的onClick方法
                 }
                 break;
         }
